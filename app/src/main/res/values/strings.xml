@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">DoggySitter</string>
+    <string name="hello_text">ברוכים הבאים לאפליקציית דוגיסיטר</string>
+    <string name="navigation_drawer_open">פתח תפריט ניווט</string>
+    <string name="navigation_drawer_close">סגור תפריט ניווט</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="pets">
+        <item>Dog</item>
+        <item>Cat</item>
+        <item>Parrot</item>
+        <item>Snake</item>
+    </string-array>
+</resources>
