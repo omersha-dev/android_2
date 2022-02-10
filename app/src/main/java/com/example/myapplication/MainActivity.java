@@ -112,6 +112,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .commit();
                 }
                 break;
+            case (R.id.signin_nav):
+                SigninFragment signinFragment = (SigninFragment) fragmentManager.findFragmentByTag("signup");
+                if (!(signinFragment instanceof SigninFragment)) {
+                    fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new SigninFragment())
+                            .addToBackStack("signin")
+                            .commit();
+                }
+                break;
+            case (R.id.my_account_nav):
+                MyAccountFragment myAccountFragment = (MyAccountFragment) fragmentManager.findFragmentByTag("signup");
+                if (!(myAccountFragment instanceof MyAccountFragment)) {
+                    fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new MyAccountFragment())
+                            .addToBackStack("my_account")
+                            .commit();
+                }
+                break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;

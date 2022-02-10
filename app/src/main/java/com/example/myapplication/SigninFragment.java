@@ -16,10 +16,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SignupFragment#newInstance} factory method to
+ * Use the {@link SigninFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SignupFragment extends Fragment {
+public class SigninFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +30,7 @@ public class SignupFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public SignupFragment() {
+    public SigninFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +40,11 @@ public class SignupFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SignupFragment.
+     * @return A new instance of fragment SigninFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SignupFragment newInstance(String param1, String param2) {
-        SignupFragment fragment = new SignupFragment();
+    public static SigninFragment newInstance(String param1, String param2) {
+        SigninFragment fragment = new SigninFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,33 +65,23 @@ public class SignupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_signup, container, false);
+        View view = inflater.inflate(R.layout.fragment_signin, container, false);
 
         // Elements
-        TextInputEditText emailField = view.findViewById(R.id.signup_email);
-        TextInputEditText passwordField = view.findViewById(R.id.signup_email);
-        TextInputEditText validatePasswordField = view.findViewById(R.id.signup_validate_password);
-        CircularProgressIndicator loader = view.findViewById(R.id.signup_loader);
-        Button signupButton = view.findViewById(R.id.signup_button);
+        TextInputEditText emailField = view.findViewById(R.id.signin_email);
+        TextInputEditText passwordField = view.findViewById(R.id.signin_password);
+        CircularProgressIndicator loader = view.findViewById(R.id.signin_loader);
+        Button signinButton = view.findViewById(R.id.signin_button);
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
+        signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loader.setVisibility(View.VISIBLE);
                 FirebaseDb firebaseDb = FirebaseDb.getInstance();
-                boolean status = firebaseDb.signUp(
+                firebaseDb.signIn(
                         emailField.getEditableText().toString(),
                         passwordField.getEditableText().toString(),
-                        validatePasswordField.getEditableText().toString(),
                         new FirebaseCallbacks() {
-                            @Override
-                            public void onSignup(boolean isExists) {
-                                if (isExists) {
-                                    Toast.makeText(getActivity(), "This email is already in use", Toast.LENGTH_SHORT).show();
-                                    loader.setVisibility(View.GONE);
-                                }
-                            }
-
                             @Override
                             public void onSignIn() {
                                 System.out.println("Signed In");
@@ -102,10 +92,17 @@ public class SignupFragment extends Fragment {
                                         .commit();
                                 fragmentManager.popBackStackImmediate();
                             }
+
+                            @Override
+                            public void onSignInFailed(String errorMessage) {
+                                loader.setVisibility(View.GONE);
+                                Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                            }
                         }
                 );
             }
         });
+
         return view;
     }
 }

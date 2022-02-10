@@ -23,8 +23,16 @@
             android:title="User Inteface" >
             <menu>
                 <item
+                    android:id="@+id/my_account_nav"
+                    android:title="My Account"
+                    android:icon="@drawable/ic_launcher_background" />
+                <item
                     android:id="@+id/signup_nav"
                     android:title="Signup"
+                    android:icon="@drawable/ic_launcher_background" />
+                <item
+                    android:id="@+id/signin_nav"
+                    android:title="Signin"
                     android:icon="@drawable/ic_launcher_background" />
                 <item
                     android:id="@+id/signout"

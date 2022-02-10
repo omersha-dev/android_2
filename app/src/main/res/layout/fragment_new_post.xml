@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".NewPostFragment"
     android:padding="20dp">
 
@@ -17,7 +16,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/new_post_name"
+            android:id="@+id/new_post_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -70,21 +69,21 @@
 
 <!--    </LinearLayout>-->
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/new_post_pet_picker_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/new_post_pet_picker_container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">-->
 
-        <AutoCompleteTextView
-            android:id="@+id/new_post_pet_picker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:text="Select Pet"/>
+<!--        <AutoCompleteTextView-->
+<!--            android:id="@+id/new_post_pet_picker"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:inputType="none"-->
+<!--            android:text="Select Pet"/>-->
 
-    </com.google.android.material.textfield.TextInputLayout>
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
 
     <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/new_post_desc"

@@ -2,15 +2,10 @@ package com.example.myapplication;
 
 import static android.app.Activity.RESULT_OK;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -84,12 +79,12 @@ public class NewPostFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_post, null);
 
-        // Init pets dropdown
-        String[] pets = getResources().getStringArray(R.array.pets);
-        AutoCompleteTextView petsPicker = (AutoCompleteTextView) view.findViewById(R.id.new_post_pet_picker);
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(requireContext(), R.array.pets, R.layout.pet_dropdown_item);
-        petsPicker.setAdapter(arrayAdapter);
-        petsPicker.setThreshold(1);
+//        // Init pets dropdown
+//        String[] pets = getResources().getStringArray(R.array.pets);
+//        AutoCompleteTextView petsPicker = (AutoCompleteTextView) view.findViewById(R.id.new_post_pet_picker);
+//        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(requireContext(), R.array.pets, R.layout.pet_dropdown_item);
+//        petsPicker.setAdapter(arrayAdapter);
+//        petsPicker.setThreshold(1);
 
         // Upload image
         newPostImageView = view.findViewById(R.id.new_post_image);
@@ -102,13 +97,12 @@ public class NewPostFragment extends Fragment {
             }
         });
 
-        TextInputEditText textInputEditText = view.findViewById(R.id.new_post_name);
         Button submitButton = (Button) view.findViewById(R.id.submit_button);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), petsPicker.getText(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), petsPicker.getText(), Toast.LENGTH_SHORT).show();
             }
         });
         return view;
