@@ -1,6 +1,9 @@
 package com.example.myapplication;
 
-import java.util.HashMap;
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 interface FirebaseCallbacks {
@@ -9,4 +12,7 @@ interface FirebaseCallbacks {
     default void onSignIn() {}
     default void onSignInFailed(String errorMessage) {}
     default void onAccountDataUpdated() {}
+    default void onSuccessfullPost() {}
+    default void onFailedPost() {}
+    default void onPostsLoaded(ArrayList posts) {}
 }

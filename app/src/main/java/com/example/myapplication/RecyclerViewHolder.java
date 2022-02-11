@@ -12,7 +12,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public RecyclerViewHolder(@NonNull View itemView) {
         super(itemView);
-        view = itemView.findViewById(R.id.randomText);
+        view = itemView.findViewById(R.id.feed_pet_name);
     }
 
     public TextView getView() {

@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        
+        FirebaseDb firebaseDb = FirebaseDb.getInstance();
+        
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Manage fragments change
@@ -93,13 +97,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             case (R.id.new_post):
-                NewPostFragment newPostFragment = (NewPostFragment) fragmentManager.findFragmentByTag("new_post");
-                if (!(newPostFragment instanceof NewPostFragment)) {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new NewPostFragment())
-                            .addToBackStack("new_post")
-                            .commit();
+                if (firebaseDb.isSignedIn()) {
+                    NewPostFragment newPostFragment = (NewPostFragment) fragmentManager.findFragmentByTag("new_post");
+                    if (!(newPostFragment instanceof NewPostFragment)) {
+                        fragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, new NewPostFragment())
+                                .addToBackStack("new_post")
+                                .commit();
+                    }
+                } else {
+                    Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+                    // TODO:
+                    // If the user is not signed in, display a popup requires signup
+                    // The popup should have three options: go to signup, go to signin, close the popup
                 }
                 break;
             case (R.id.signup_nav):

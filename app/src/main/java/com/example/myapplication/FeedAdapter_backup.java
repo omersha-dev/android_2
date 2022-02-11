@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Random;
 
-public class RandomNumListAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
+public class FeedAdapter_backup extends RecyclerView.Adapter<RecyclerViewHolder> {
 
     private Random random;
 
-    public RandomNumListAdapter (int seed) {
+    public FeedAdapter_backup(int seed) {
         this.random = new Random(seed);
     }
 

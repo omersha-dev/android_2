@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,11 +73,20 @@ public class FeedFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        // Add the following lines to create RecyclerView
-        recyclerView = view.findViewById(R.id.feed_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new RandomNumListAdapter(1234));
+        Context context = this.getContext();
+
+        FirebaseDb firebaseDb = FirebaseDb.getInstance();
+        firebaseDb.getAllPosts(new FirebaseCallbacks() {
+            @Override
+            public void onPostsLoaded(ArrayList posts) {
+//                 Add the following lines to create RecyclerView
+                recyclerView = view.findViewById(R.id.feed_view);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+                recyclerView.setAdapter(new FeedAdapter(context, posts));
+            }
+        });
+
 
         return view;
     }

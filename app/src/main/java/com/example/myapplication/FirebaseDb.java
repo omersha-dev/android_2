@@ -4,10 +4,15 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +142,48 @@ public class FirebaseDb {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
+                        currentUser = newUserData;
                         System.out.println("Done!");
+                    }
+                });
+    }
+
+    public void addPost(Map<String, Object> postData, FirebaseCallbacks callbacks) {
+        db.collection("posts")
+                .add(postData)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        callbacks.onSuccessfullPost();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callbacks.onFailedPost();
+                    }
+                });
+    }
+
+    public void getAllPosts(FirebaseCallbacks callbacks) {
+        db.collection("posts")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<Map<String, Object>> posts = new ArrayList();
+                        queryDocumentSnapshots.forEach(queryDocumentSnapshot -> {
+                            posts.add(queryDocumentSnapshot.getData());
+                        });
+                        callbacks.onPostsLoaded(posts);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Failed");
+                        System.out.println(e);
                     }
                 });
     }

@@ -105,16 +105,25 @@ public class MyAccountFragment extends Fragment {
         } else {
             emailField.setText((String)currentUser.get("email"));
             if (currentUser.containsKey("firstname")) {
-                firstnameField.setText((String)currentUser.get("firstname"));
+                firstnameField.setText(currentUser.get("firstname").toString());
             }
             if (currentUser.containsKey("lastname")) {
-                lastnameField.setText((String)currentUser.get("lastname"));
+                lastnameField.setText(currentUser.get("lastname").toString());
             }
             if (currentUser.containsKey("phone")) {
-                phoneField.setText((String)currentUser.get("phone"));
+                phoneField.setText(currentUser.get("phone").toString());
             }
-            if (currentUser.containsKey("petname")) {
-                petNameField.setText((String)currentUser.get("petname"));
+            if (currentUser.containsKey("pet_name")) {
+                petNameField.setText(currentUser.get("pet_name").toString());
+            }
+            if (currentUser.containsKey("pet_age")) {
+                petAgeField.setText(currentUser.get("pet_age").toString());
+            }
+            if (currentUser.containsKey("pet_gender")) {
+                petGenderField.setText(currentUser.get("pet_gender").toString(), false);
+            }
+            if (currentUser.containsKey("pet_size")) {
+                petSizeField.setText(currentUser.get("pet_size").toString(), false);
             }
         }
 
@@ -141,17 +150,16 @@ public class MyAccountFragment extends Fragment {
                     newUserData.put("phone", phoneField.getEditableText().toString());
                 }
                 if (!petNameField.getEditableText().toString().equals("")) {
-                    newUserData.put("petname", petNameField.getEditableText().toString());
+                    newUserData.put("pet_name", petNameField.getEditableText().toString());
                 }
                 if (!petAgeField.getEditableText().toString().equals("")) {
-                    newUserData.put("petage", petAgeField.getEditableText().toString());
+                    newUserData.put("pet_age", petAgeField.getEditableText().toString());
                 }
                 if (!petGenderField.getEditableText().toString().equals("")) {
-                    System.out.println("Asdf " + petGenderField.getText().getClass().getName());
-                    newUserData.put("petgender", petGenderField.getEditableText().toString());
+                    newUserData.put("pet_gender", petGenderField.getEditableText().toString());
                 }
                 if (!petSizeField.getEditableText().toString().equals("")) {
-                    newUserData.put("petsize", petSizeField.getEditableText().toString());
+                    newUserData.put("pet_size", petSizeField.getEditableText().toString());
                 }
 
                 System.out.println(newUserData);

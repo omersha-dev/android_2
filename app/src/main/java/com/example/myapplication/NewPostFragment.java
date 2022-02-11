@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -19,7 +20,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import org.w3c.dom.Text;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,14 +86,61 @@ public class NewPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_new_post, null);
+        View view = inflater.inflate(R.layout.fragment_new_post, container, false);
 
-//        // Init pets dropdown
-//        String[] pets = getResources().getStringArray(R.array.pets);
-//        AutoCompleteTextView petsPicker = (AutoCompleteTextView) view.findViewById(R.id.new_post_pet_picker);
-//        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(requireContext(), R.array.pets, R.layout.pet_dropdown_item);
-//        petsPicker.setAdapter(arrayAdapter);
-//        petsPicker.setThreshold(1);
+//        Get fragment's elements
+        TextInputLayout petNameLayout = view.findViewById(R.id.new_post_pet_name_layout);
+        TextInputEditText petNameField = view.findViewById(R.id.new_post_pet_name);
+
+        TextInputLayout petAgeLayout = view.findViewById(R.id.new_post_pet_age_layout);
+        TextInputEditText petAgeField = view.findViewById(R.id.new_post_pet_age);
+
+        TextInputLayout petGenderLayout = view.findViewById(R.id.new_post_pet_gender_layout);
+        AutoCompleteTextView petGenderField = view.findViewById(R.id.new_post_pet_gender);
+
+        TextInputLayout petSizeLayout = view.findViewById(R.id.new_post_pet_size_layout);
+        AutoCompleteTextView petSizeField = view.findViewById(R.id.new_post_pet_size);
+
+        TextInputLayout postDescriptionLayout = view.findViewById(R.id.new_post_desc_layout);
+        TextInputEditText postDescriptionField = view.findViewById(R.id.new_post_desc);
+
+        Button postButton = (Button) view.findViewById(R.id.new_post_publish_post);
+
+        CircularProgressIndicator loader = view.findViewById(R.id.new_post_loader);
+
+        // Init pet genders dropdown
+        String[] genders = getResources().getStringArray(R.array.pet_genders);
+        ArrayAdapter<CharSequence> gendersArrayAdapter = ArrayAdapter.createFromResource(requireContext(), R.array.pet_genders, R.layout.pet_dropdown_item);
+        petGenderField.setAdapter(gendersArrayAdapter);
+        petGenderField.setThreshold(1);
+
+        // Init pet sizes dropdown
+        String[] sizes = getResources().getStringArray(R.array.pet_genders);
+        ArrayAdapter<CharSequence> sizesArrayAdapter = ArrayAdapter.createFromResource(requireContext(), R.array.pet_sizes, R.layout.pet_dropdown_item);
+        petSizeField.setAdapter(sizesArrayAdapter);
+        petSizeField.setThreshold(1);
+
+        Map<String, Object> currentUser = FirebaseDb.getCurrentUser();
+        if (currentUser.containsKey("pet_name")) {
+            petNameField.setText(currentUser.get("pet_name").toString());
+        } else {
+            petNameField.setEnabled(true);
+        }
+        if (currentUser.containsKey("pet_age")) {
+            petAgeField.setText(currentUser.get("pet_age").toString());
+        } else {
+            petAgeField.setEnabled(true);
+        }
+        if (currentUser.containsKey("pet_gender")) {
+            petGenderField.setText(currentUser.get("pet_gender").toString(), false);
+        } else {
+            petGenderField.setEnabled(true);
+        }
+        if (currentUser.containsKey("pet_size")) {
+            petSizeField.setText(currentUser.get("pet_size").toString(), false);
+        } else {
+            petSizeField.setEnabled(true);
+        }
 
         // Upload image
         newPostImageView = view.findViewById(R.id.new_post_image);
@@ -97,16 +153,68 @@ public class NewPostFragment extends Fragment {
             }
         });
 
-        Button submitButton = (Button) view.findViewById(R.id.submit_button);
-
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        postButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-//                Toast.makeText(getActivity(), petsPicker.getText(), Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                loader.setVisibility(View.VISIBLE);
+                boolean hasErrors = false;
+                Map<String, Object> postData = new HashMap<>();
+                postData.put("email", FirebaseDb.getCurrentUser().get("email"));
+                postData.put("timestamp", new Timestamp(System.currentTimeMillis()));
+                if (petNameField.getEditableText().toString().isEmpty()) {
+                    postDescriptionLayout.setError("Required");
+                    hasErrors = true;
+                } else {
+                    postData.put("pet_name", petNameField.getEditableText().toString());
+                }
+                if (petAgeField.getEditableText().toString().isEmpty()) {
+                    petAgeLayout.setError("Required");
+                    hasErrors = true;
+                } else {
+                    postData.put("pet_age", petAgeField.getEditableText().toString());
+                }
+                if (petGenderField.getEditableText().toString().isEmpty()) {
+                    petGenderLayout.setError("Required");
+                    hasErrors = true;
+                } else {
+                    postData.put("pet_gender", petGenderField.getEditableText().toString());
+                }
+                if (petSizeField.getEditableText().toString().isEmpty()) {
+                    petSizeLayout.setError("Required");
+                } else {
+                    postData.put("pet_size", petSizeField.getEditableText().toString());
+                }
+                if (postDescriptionField.getEditableText().toString().isEmpty()) {
+                    postDescriptionLayout.setError("Required");
+                    hasErrors = true;
+                } else {
+                    postData.put("post_description", postDescriptionField.getEditableText().toString());
+                }
+                if (!hasErrors) {
+                    FirebaseDb firebaseDb = FirebaseDb.getInstance();
+                    firebaseDb.addPost(postData, new FirebaseCallbacks() {
+                        @Override
+                        public void onSuccessfullPost() {
+                            loader.setVisibility(View.GONE);
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager
+                                    .beginTransaction()
+                                    .replace(R.id.fragment_container, new FeedFragment())
+                                    .commit();
+                            fragmentManager.popBackStackImmediate();
+                        }
+
+                        @Override
+                        public void onFailedPost() {
+                            loader.setVisibility(View.GONE);
+                            Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
+
         return view;
-//        return inflater.inflate(R.layout.fragment_new_post, container, false);
     }
 
     @Override
