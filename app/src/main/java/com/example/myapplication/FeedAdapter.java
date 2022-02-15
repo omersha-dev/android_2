@@ -1,10 +1,14 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,9 +34,23 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FeedAdapterHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FeedAdapterHolder holder, @SuppressLint("RecyclerView") int position) {
+
+        char petGender = posts.get(position).get("pet_gender").toString().charAt(0);
+        char petSize = posts.get(position).get("pet_size").toString().charAt(0);
+
         holder.petName.setText(posts.get(position).get("pet_name").toString());
-        holder.postDesc.setText(posts.get(position).get("post_description").toString());
+        holder.postDesc.setText(posts.get(position).get("post_description").toString() + "\n\nClick for details.");
+        holder.feedPetAgeView.setText(posts.get(position).get("pet_age").toString());
+        holder.feedPetGenderView.setText(String.valueOf(petGender));
+        holder.feedPetSizeView.setText(String.valueOf(petSize));
+        
+        holder.makeContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), posts.get(position).get("email").toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -42,13 +60,38 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterHol
 
     class FeedAdapterHolder extends RecyclerView.ViewHolder {
 
-        TextView petName, postDesc;
+        LinearLayout container;
+        TextView petName, postDesc, feedPetAgeView, feedPetGenderView, feedPetSizeView;
+        LinearLayout feedDetails;
+        Button makeContact;
 
         public FeedAdapterHolder(View itemView) {
             super(itemView);
-            petName = (TextView) itemView.findViewById(R.id.feed_pet_name);
-            postDesc = (TextView) itemView.findViewById(R.id.feed_post_desc);
+            container           = (LinearLayout)    itemView.findViewById(R.id.feed_item_container);
+            petName             = (TextView)        itemView.findViewById(R.id.feed_pet_name);
+            postDesc            = (TextView)        itemView.findViewById(R.id.feed_post_desc);
+            feedDetails         = (LinearLayout)    itemView.findViewById(R.id.feed_details);
+            feedPetAgeView      = (TextView)        itemView.findViewById(R.id.feed_item_age);
+            feedPetGenderView   = (TextView)        itemView.findViewById(R.id.feed_item_gender);
+            feedPetSizeView     = (TextView)        itemView.findViewById(R.id.feed_item_size);
+            makeContact         = (Button)          itemView.findViewById(R.id.feed_make_contact);
+
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (feedDetails.getVisibility() == View.GONE) {
+                        feedDetails.setVisibility(View.VISIBLE);
+                    } else {
+                        feedDetails.setVisibility(View.GONE);
+                    }
+                }
+            });
+
         }
+    }
+
+    public interface onItemClick {
+        void onClick(int position);
     }
 
 }

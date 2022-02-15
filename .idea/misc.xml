@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/HIT/android_2/app/src/main/res/drawable/bottom_line.xml" value="0.2235" />
         <entry key="..\:/HIT/android_2/app/src/main/res/layout/fragment_my_account.xml" value="0.1" />
         <entry key="..\:/HIT/android_2/app/src/main/res/layout/fragment_new_post.xml" value="0.1" />
         <entry key="..\:/HIT/android_2/app/src/main/res/layout/fragment_signin.xml" value="0.18541666666666667" />

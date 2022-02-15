@@ -22,7 +22,7 @@ import java.util.Map;
  * Use the {@link FeedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment implements FeedAdapter.onItemClick {
 
     // Add RecyclerView member;
     private RecyclerView recyclerView;
@@ -89,5 +89,10 @@ public class FeedFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onClick(int position) {
+
     }
 }

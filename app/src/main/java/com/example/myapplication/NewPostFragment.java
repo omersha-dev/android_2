@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,10 @@ import android.widget.Toast;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -40,6 +45,9 @@ public class NewPostFragment extends Fragment {
     final int CAMERA_REQUEST = 1;
     ImageView newPostImageView;
     Bitmap bitmap;
+//    private DatabaseReference root = FirebaseDatabase.getInstance().getReference("image");
+    private StorageReference reference = FirebaseStorage.getInstance().getReference();
+    private Uri imageUri;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -148,8 +156,12 @@ public class NewPostFragment extends Fragment {
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, CAMERA_REQUEST);
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, 2);
+//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(intent, CAMERA_REQUEST);
             }
         });
 
@@ -190,6 +202,10 @@ public class NewPostFragment extends Fragment {
                 } else {
                     postData.put("post_description", postDescriptionField.getEditableText().toString());
                 }
+                if (bitmap == null) {
+                    Toast.makeText(getActivity(), "Please add an image", Toast.LENGTH_SHORT).show();
+                    hasErrors = true;
+                }
                 if (!hasErrors) {
                     FirebaseDb firebaseDb = FirebaseDb.getInstance();
                     firebaseDb.addPost(postData, new FirebaseCallbacks() {
@@ -220,9 +236,15 @@ public class NewPostFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            bitmap = (Bitmap) data.getExtras().get("data");
-            newPostImageView.setImageBitmap(bitmap);
+
+        if (requestCode == 2 && requestCode == RESULT_OK && data != null) {
+            imageUri = data.getData();
+            newPostImageView.setImageURI(imageUri);
         }
+
+//        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+//            bitmap = (Bitmap) data.getExtras().get("data");
+//            newPostImageView.setImageBitmap(bitmap);
+//        }
     }
 }
