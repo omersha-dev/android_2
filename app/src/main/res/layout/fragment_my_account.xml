@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp"
-        android:text="My Account"
+        android:text="@string/my_account"
         android:textAlignment="center"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -26,7 +26,7 @@
             android:id="@+id/my_account_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/email"
             android:enabled="false"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -35,9 +35,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="Change Password"
+        android:text="@string/change_password"
         android:textAlignment="center"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold" />
     
     <com.google.android.material.textfield.TextInputLayout
@@ -49,7 +49,7 @@
             android:id="@+id/my_account_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -63,7 +63,7 @@
             android:id="@+id/my_account_validate_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirm Password"
+            android:hint="@string/confirm_password"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -72,27 +72,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="Me &amp; My Pet"
+        android:text="@string/me_and_pet"
         android:textAlignment="center"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold" />
     
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/my_account_firstname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="First Name"/>
+                android:hint="@string/first_name"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,14 +101,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/my_account_lastname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Last Name"/>
+                android:hint="@string/last_name"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -122,7 +123,7 @@
             android:id="@+id/my_account_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone"
+            android:hint="@string/phone"
             android:inputType="phone" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -136,13 +137,14 @@
             android:id="@+id/my_account_pet_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Pet Name"/>
+            android:hint="@string/pet_name"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -154,7 +156,7 @@
                 android:id="@+id/my_account_pet_age"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Pet Age"
+                android:hint="@string/pet_age"
                 android:inputType="number" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -170,7 +172,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:hint="Pet Gender" />
+                android:hint="@string/pet_gender" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -185,7 +187,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:hint="Size" />
+                android:hint="@string/pet_size" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -195,7 +197,7 @@
         android:id="@+id/my_account_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update" >
+        android:text="@string/update" >
 
 
     </Button>

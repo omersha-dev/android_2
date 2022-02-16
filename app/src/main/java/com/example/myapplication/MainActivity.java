@@ -8,12 +8,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,9 +35,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigation);
 
+        boolean isRightToLeft = getResources().getBoolean(R.bool.is_right_to_left);
+
+        // TODO: If RTL, set the NavigationView's layout_gravity to RIGHT. Currently does not work.
+//        if (isRightToLeft) {
+//            navigationView.setForegroundGravity(Gravity.RIGHT);
+//        }
+
         // Set the custom toolbar as the app's toolbar
         setSupportActionBar(materialToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         navigationView.bringToFront();
 
         // Enable drawer
@@ -78,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case (R.id.feed):
                 fragmentManager.popBackStackImmediate();
                 FeedFragment feedFragment = (FeedFragment) fragmentManager.findFragmentByTag("feed");
-                if (!(feedFragment instanceof FeedFragment)) {
+                if (feedFragment == null) {
                     fragmentManager
                             .beginTransaction()
                             .replace(R.id.fragment_container, new FeedFragment())
@@ -88,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case (R.id.articles):
                 ArticlesFragment articlesFragment = (ArticlesFragment) fragmentManager.findFragmentByTag("articles");
-                if (!(articlesFragment instanceof ArticlesFragment)) {
+                if (articlesFragment == null) {
                     fragmentManager
                             .beginTransaction()
                             .replace(R.id.fragment_container, new ArticlesFragment())
@@ -99,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case (R.id.new_post):
                 if (firebaseDb.isSignedIn()) {
                     NewPostFragment newPostFragment = (NewPostFragment) fragmentManager.findFragmentByTag("new_post");
-                    if (!(newPostFragment instanceof NewPostFragment)) {
+                    if (newPostFragment == null) {
                         fragmentManager
                                 .beginTransaction()
                                 .replace(R.id.fragment_container, new NewPostFragment())
@@ -115,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case (R.id.signup_nav):
                 SignupFragment signupFragment = (SignupFragment) fragmentManager.findFragmentByTag("signup");
-                if (!(signupFragment instanceof SignupFragment)) {
+                if (signupFragment == null) {
                     fragmentManager
                             .beginTransaction()
                             .replace(R.id.fragment_container, new SignupFragment())
@@ -125,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case (R.id.signin_nav):
                 SigninFragment signinFragment = (SigninFragment) fragmentManager.findFragmentByTag("signup");
-                if (!(signinFragment instanceof SigninFragment)) {
+                if (signinFragment == null) {
                     fragmentManager
                             .beginTransaction()
                             .replace(R.id.fragment_container, new SigninFragment())
@@ -135,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case (R.id.my_account_nav):
                 MyAccountFragment myAccountFragment = (MyAccountFragment) fragmentManager.findFragmentByTag("signup");
-                if (!(myAccountFragment instanceof MyAccountFragment)) {
+                if (myAccountFragment == null) {
                     fragmentManager
                             .beginTransaction()
                             .replace(R.id.fragment_container, new MyAccountFragment())

@@ -13,9 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp"
-        android:text="New Post"
+        android:text="@string/new_post"
         android:textAlignment="center"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -35,7 +35,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -48,7 +49,7 @@
                 android:id="@+id/new_post_pet_age"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Age"
+                android:hint="@string/pet_age"
                 android:enabled="false" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -66,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:hint="Pet Gender"
+                android:hint="@string/pet_gender"
                 android:enabled="false" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -84,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:hint="Size"
+                android:hint="@string/pet_size"
                 android:enabled="false"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -95,7 +96,7 @@
         android:id="@+id/new_post_desc_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Post Description"
+        android:hint="@string/post_description"
         android:layout_marginTop="10dp"
         app:errorEnabled="true"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -113,19 +114,20 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:scaleType="fitXY"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:contentDescription="@string/place_holder"/>
 
     <Button
         android:id="@+id/new_post_take_picture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add picture"/>
+        android:text="@string/add_picture"/>
 
     <Button
         android:id="@+id/new_post_publish_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Post"
+        android:text="@string/post"
         android:layout_marginTop="10dp"
         />
 

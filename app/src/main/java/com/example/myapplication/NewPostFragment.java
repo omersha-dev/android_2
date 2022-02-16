@@ -34,6 +34,7 @@ import org.w3c.dom.Text;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -130,22 +131,22 @@ public class NewPostFragment extends Fragment {
 
         Map<String, Object> currentUser = FirebaseDb.getCurrentUser();
         if (currentUser.containsKey("pet_name")) {
-            petNameField.setText(currentUser.get("pet_name").toString());
+            petNameField.setText(Objects.requireNonNull(currentUser.get("pet_name")).toString());
         } else {
             petNameField.setEnabled(true);
         }
         if (currentUser.containsKey("pet_age")) {
-            petAgeField.setText(currentUser.get("pet_age").toString());
+            petAgeField.setText(Objects.requireNonNull(currentUser.get("pet_age")).toString());
         } else {
             petAgeField.setEnabled(true);
         }
         if (currentUser.containsKey("pet_gender")) {
-            petGenderField.setText(currentUser.get("pet_gender").toString(), false);
+            petGenderField.setText(Objects.requireNonNull(currentUser.get("pet_gender")).toString(), false);
         } else {
             petGenderField.setEnabled(true);
         }
         if (currentUser.containsKey("pet_size")) {
-            petSizeField.setText(currentUser.get("pet_size").toString(), false);
+            petSizeField.setText(Objects.requireNonNull(currentUser.get("pet_size")).toString(), false);
         } else {
             petSizeField.setEnabled(true);
         }
@@ -189,12 +190,41 @@ public class NewPostFragment extends Fragment {
                     petGenderLayout.setError("Required");
                     hasErrors = true;
                 } else {
-                    postData.put("pet_gender", petGenderField.getEditableText().toString());
+                    String pet_gender = petGenderField.getEditableText().toString();
+                    String pet_gender_to_save;
+                    switch (pet_gender) {
+                        case "זכר":
+                            pet_gender_to_save = "Male";
+                            break;
+                        case "נקבה":
+                            pet_gender_to_save = "Female";
+                            break;
+                        default:
+                            pet_gender_to_save = pet_gender;
+                            break;
+                    }
+                    postData.put("pet_gender", pet_gender_to_save);
                 }
                 if (petSizeField.getEditableText().toString().isEmpty()) {
                     petSizeLayout.setError("Required");
                 } else {
-                    postData.put("pet_size", petSizeField.getEditableText().toString());
+                    String pet_size = petSizeField.getEditableText().toString();
+                    String pet_size_to_save;
+                    switch (pet_size) {
+                        case "קטן":
+                            pet_size_to_save = "Small";
+                            break;
+                        case "בינוני":
+                            pet_size_to_save = "Medium";
+                            break;
+                        case "גדול":
+                            pet_size_to_save = "Large";
+                            break;
+                        default:
+                            pet_size_to_save = pet_size;
+                            break;
+                    }
+                    postData.put("pet_size", pet_size_to_save);
                 }
                 if (postDescriptionField.getEditableText().toString().isEmpty()) {
                     postDescriptionLayout.setError("Required");
