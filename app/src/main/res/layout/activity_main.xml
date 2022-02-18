@@ -37,6 +37,7 @@
         android:id="@+id/navigation"
         app:headerLayout="@layout/header"
         app:menu="@menu/main"
-        android:layout_gravity="left" />
+        android:supportsRtl="true"
+        android:layout_gravity="start"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

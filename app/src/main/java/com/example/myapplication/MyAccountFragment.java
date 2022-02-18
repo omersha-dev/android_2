@@ -161,11 +161,14 @@ public class MyAccountFragment extends Fragment {
                 if (!petSizeField.getEditableText().toString().equals("")) {
                     newUserData.put("pet_size", petSizeField.getEditableText().toString());
                 }
-
-                System.out.println(newUserData);
-
+                
                 FirebaseDb firebaseDb = FirebaseDb.getInstance();
-                firebaseDb.updateUserData(newUserData);
+                firebaseDb.updateUserData(newUserData, new FirebaseCallbacks() {
+                    @Override
+                    public void userUpdated() {
+                        Toast.makeText(getActivity(), "Details Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 

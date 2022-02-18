@@ -1,28 +1,37 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.sql.Array;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class FirebaseDb {
 
     private static Map<String, Object> currentUser = null;
     private static FirebaseDb firebaseDb = null;
+    private static Map<String, Object> posts = new HashMap<>();
+    private static Map<String, Object> chats = new HashMap<>();
+    private static String lastChatID = null;
+    private static ArrayList<Map<String, Object>> messages = new ArrayList<>();
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public static FirebaseDb getInstance() {
@@ -30,6 +39,22 @@ public class FirebaseDb {
             firebaseDb = new FirebaseDb();
         }
         return firebaseDb;
+    }
+
+    public void listenForUpdates(FirebaseCallbacks callbacks) {
+        CollectionReference collectionReference = db.collection("posts");
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    System.err.println("Listing failed: " + e);
+                    return;
+                }
+
+                callbacks.newPosts();
+
+            }
+        });
     }
 
     public boolean isSignedIn() {
@@ -88,18 +113,12 @@ public class FirebaseDb {
                                     System.out.println("Succeed");
                                     currentUser = user;
                                     callback.onSignIn();
-//                                     TODO: Add callbaack:
-//                                     1. remove the signup fragment from backstack
-//                                     2. Sign user in
-//                                     3. Open feed fragment
                                     }
                                 })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     System.out.println("Failed");
-//                                    TODO: Add callback:
-//                                    What to do if the registration failed
                                 }
                             });
                 }
@@ -128,13 +147,12 @@ public class FirebaseDb {
         });
     }
 
-    public void updateUserData(Map<String, Object> newUserData) {
+    public void signOut(FirebaseCallbacks callbacks) {
+        currentUser = null;
+        callbacks.signedOut();
+    }
 
-//        newUserData.forEach((key, value) -> {
-//            if (currentUser.containsKey(key) && currentUser.get(key).equals(value)) {
-//                newUserData.remove(key);
-//            }
-//        });
+    public void updateUserData(Map<String, Object> newUserData, FirebaseCallbacks callbacks) {
 
         db.collection("users")
                 .document((String) currentUser.get("email"))
@@ -143,7 +161,7 @@ public class FirebaseDb {
                     @Override
                     public void onSuccess(Void unused) {
                         currentUser = newUserData;
-                        System.out.println("Done!");
+                        callbacks.userUpdated();
                     }
                 });
     }
@@ -172,11 +190,14 @@ public class FirebaseDb {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        ArrayList<Map<String, Object>> posts = new ArrayList();
-                        queryDocumentSnapshots.forEach(queryDocumentSnapshot -> {
-                            posts.add(queryDocumentSnapshot.getData());
-                        });
-                        callbacks.onPostsLoaded(posts);
+                        Map<String, Object> newPosts = new HashMap<>();
+                        ArrayList<Map<String, Object>> postsInDb = new ArrayList();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            newPosts.put(doc.getId(), doc.getData());
+                            postsInDb.add(doc.getData());
+                        }
+                        posts = newPosts;
+                        callbacks.onPostsLoaded(postsInDb);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -186,6 +207,121 @@ public class FirebaseDb {
                         System.out.println(e);
                     }
                 });
+    }
+
+    public void getChats(FirebaseCallbacks callbacks) {
+        db.collection("chats")
+                .orderBy("last_message_date")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            Map<String, Object> newChats = new HashMap<>();
+                            ArrayList<Map<String, Object>> chatsInDb = new ArrayList();
+                            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                                newChats.put(doc.getId(), doc.getData());
+                                chatsInDb.add(doc.getData());
+                            }
+                            chats = newChats;
+                            callbacks.onChatsLoaded(chatsInDb);
+                        }
+                    }
+                });
+    }
+
+    private void createNewChat(String otherUser, FirebaseCallbacks callbacks) {
+        Map<String, Object> chatProperties = new HashMap<>();
+        chatProperties.put("contacts", Arrays.asList(currentUser.get("email").toString(), otherUser));
+        chatProperties.put("last_message_date", new Timestamp(System.currentTimeMillis()));
+        chatProperties.put("messages", new ArrayList<Map<String, Object>>());
+        db.collection("chats")
+                .add(chatProperties)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        callbacks.chatCreated(documentReference.getId());
+                    }
+                });
+    }
+
+    public void checkChatBetweenUsers(String otherUser, FirebaseCallbacks callbacks) {
+        db.collection("chats")
+                .whereArrayContains("contacts", currentUser.get("email").toString())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.size() == 0) {
+                            createNewChat(otherUser, new FirebaseCallbacks() {
+                                @Override
+                                public void chatCreated(String chatId) {
+                                    lastChatID = chatId;
+                                }
+                            });
+                        } else {
+                            Map<String, Object> chat = null;
+                            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                                ArrayList contactsInDoc = (ArrayList) doc.getData().get("contacts");
+                                if (contactsInDoc.contains(otherUser)) {
+                                    lastChatID = doc.getId();
+                                    messages = (ArrayList<Map<String, Object>>)doc.get("messages");
+                                    break;
+                                }
+                            }
+                        }
+                        callbacks.startChat();
+                    }
+                });
+    }
+
+    public ArrayList<Map<String, Object>> getAllMessages() {
+        try {
+            Map<String, Object> currentChat = (Map<String, Object>) chats.get(lastChatID);
+            return (ArrayList<Map<String, Object>>) currentChat.get("messages");
+        } catch (NullPointerException exception) {
+            return new ArrayList<>();
+        }
+    }
+
+    public void addNewMessage(String otherUserEmail, String message, FirebaseCallbacks callbacks) {
+        Map<String, Object> messageObj = new HashMap<>();
+        messageObj.put("message", message);
+        messageObj.put("sender", currentUser.get("email").toString());
+        messageObj.put("timestamp", new Timestamp(System.currentTimeMillis()));
+        db.collection("chats")
+                .document(lastChatID)
+                .update("messages", FieldValue.arrayUnion(messageObj))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callbacks.messageSent();
+                    }
+                });
+    }
+
+    public void listenForNewMessages(String otherUserEmail, FirebaseCallbacks callbacks) {
+        Query query = db.collection("chats")
+                .whereArrayContains("contacts", currentUser.get("email").toString());
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    System.err.println("Listing failed: " + e);
+                    return;
+                }
+
+                System.out.println("Got new message(s)!");
+                getChats(new FirebaseCallbacks() {
+                    @Override
+                    public void onChatsLoaded(ArrayList<Map<String, Object>> chatsInDb) {
+                        Map<String, Object> currentChat = (Map<String, Object>) chats.get(lastChatID);
+                        callbacks.newMessage((ArrayList) currentChat.get("messages"));
+                    }
+                });
+
+            }
+        });
     }
 
 }

@@ -8,7 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
-import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     FrameLayout frameLayout;
+    MenuItem currentMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +37,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.navigation);
 
         boolean isRightToLeft = getResources().getBoolean(R.bool.is_right_to_left);
-
-        // TODO: If RTL, set the NavigationView's layout_gravity to RIGHT. Currently does not work.
-//        if (isRightToLeft) {
-//            navigationView.setForegroundGravity(Gravity.RIGHT);
-//        }
 
         // Set the custom toolbar as the app's toolbar
         setSupportActionBar(materialToolbar);
@@ -80,42 +76,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         
         FirebaseDb firebaseDb = FirebaseDb.getInstance();
-        
         FragmentManager fragmentManager = getSupportFragmentManager();
+
+        this.uncheckMenuItems();
+        item.setChecked(true);
+
+//        FeedFragment feedFragment = (FeedFragment) fragmentManager.findFragmentByTag("feed");
+//        ArticlesFragment articlesFragment = (ArticlesFragment) fragmentManager.findFragmentByTag("articles");
+//        NewPostFragment newPostFragment = (NewPostFragment) fragmentManager.findFragmentByTag("new_post");
+//        ContactsFragment contactsFragment = (ContactsFragment) fragmentManager.findFragmentByTag("chat");
+//        SignupFragment signupFragment = (SignupFragment) fragmentManager.findFragmentByTag("signup");
+//        SigninFragment signinFragment = (SigninFragment) fragmentManager.findFragmentByTag("signup");
+//        MyAccountFragment myAccountFragment = (MyAccountFragment) fragmentManager.findFragmentByTag("signup");
+
+        FeedFragment feedFragment = new FeedFragment();
+        ArticlesFragment articlesFragment = new ArticlesFragment();
+        NewPostFragment newPostFragment = new NewPostFragment();
+        ContactsFragment contactsFragment = new ContactsFragment();
+        SignupFragment signupFragment = new SignupFragment();
+        SigninFragment signinFragment = new SigninFragment();
+        MyAccountFragment myAccountFragment = new MyAccountFragment();
 
         // Manage fragments change
         switch (item.getItemId()) {
             case (R.id.feed):
                 fragmentManager.popBackStackImmediate();
-                FeedFragment feedFragment = (FeedFragment) fragmentManager.findFragmentByTag("feed");
-                if (feedFragment == null) {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new FeedFragment())
-                            .addToBackStack("feed")
-                            .commit();
-                }
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, feedFragment)
+                        .addToBackStack("feed")
+                        .commit();
                 break;
             case (R.id.articles):
-                ArticlesFragment articlesFragment = (ArticlesFragment) fragmentManager.findFragmentByTag("articles");
                 if (articlesFragment == null) {
                     fragmentManager
                             .beginTransaction()
-                            .replace(R.id.fragment_container, new ArticlesFragment())
+                            .replace(R.id.fragment_container, articlesFragment)
                             .addToBackStack("articles")
                             .commit();
                 }
                 break;
             case (R.id.new_post):
                 if (firebaseDb.isSignedIn()) {
-                    NewPostFragment newPostFragment = (NewPostFragment) fragmentManager.findFragmentByTag("new_post");
-                    if (newPostFragment == null) {
-                        fragmentManager
-                                .beginTransaction()
-                                .replace(R.id.fragment_container, new NewPostFragment())
-                                .addToBackStack("new_post")
-                                .commit();
-                    }
+                    fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, newPostFragment)
+                            .addToBackStack("new_post")
+                            .commit();
                 } else {
                     Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
                     // TODO:
@@ -123,39 +130,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // The popup should have three options: go to signup, go to signin, close the popup
                 }
                 break;
+            case (R.id.chat_nav):
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, contactsFragment)
+                        .addToBackStack("chat")
+                        .commit();
+                break;
             case (R.id.signup_nav):
-                SignupFragment signupFragment = (SignupFragment) fragmentManager.findFragmentByTag("signup");
-                if (signupFragment == null) {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new SignupFragment())
-                            .addToBackStack("signup")
-                            .commit();
-                }
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, signupFragment)
+                        .addToBackStack("signup")
+                        .commit();
                 break;
             case (R.id.signin_nav):
-                SigninFragment signinFragment = (SigninFragment) fragmentManager.findFragmentByTag("signup");
-                if (signinFragment == null) {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new SigninFragment())
-                            .addToBackStack("signin")
-                            .commit();
-                }
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, signinFragment)
+                        .addToBackStack("signin")
+                        .commit();
                 break;
             case (R.id.my_account_nav):
-                MyAccountFragment myAccountFragment = (MyAccountFragment) fragmentManager.findFragmentByTag("signup");
-                if (myAccountFragment == null) {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, new MyAccountFragment())
-                            .addToBackStack("my_account")
-                            .commit();
-                }
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, myAccountFragment)
+                        .addToBackStack("my_account")
+                        .commit();
                 break;
+            case (R.id.signout):
+                FirebaseDb.getInstance().signOut(new FirebaseCallbacks() {
+                    @Override
+                    public void signedOut() {
+                        fragmentManager.popBackStackImmediate();
+                        fragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, feedFragment)
+                                .addToBackStack("feed")
+                                .commit();
+                    }
+                });
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;
+    }
+
+    private void uncheckMenuItems() {
+        Menu menu = navigationView.getMenu();
+        for (int i =0; i< menu.size(); i++) {
+            MenuItem menuItem = menu.getItem(i);
+            if (menuItem.isChecked()) {
+                menuItem.setChecked(false);
+            }
+        }
     }
 
 }

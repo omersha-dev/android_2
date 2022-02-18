@@ -1,9 +1,6 @@
 package com.example.myapplication;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 interface FirebaseCallbacks {
@@ -15,4 +12,12 @@ interface FirebaseCallbacks {
     default void onSuccessfullPost() {}
     default void onFailedPost() {}
     default void onPostsLoaded(ArrayList posts) {}
+    default void newPosts() {}
+    default void onChatsLoaded(ArrayList<Map<String, Object>> chatsInDb) {}
+    default void signedOut() {}
+    default void startChat() {}
+    default void chatCreated(String chatId) {}
+    default void messageSent() {}
+    default void newMessage(ArrayList messages) {}
+    default void userUpdated() {}
 }

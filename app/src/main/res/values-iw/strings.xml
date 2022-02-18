@@ -39,12 +39,16 @@
     <string name="pet_size">גודל חיית המחמד</string>
     <string name="update">עדכון</string>
 
-    <!-- New Post -->
+    <!-- New Post Fragment -->
     <string name="add_picture">הוספת תמונה</string>
     <string name="post">פרסום</string>
 
+    <!-- Chat Fragment -->
+    <string name="chat">צ\'אט</string>
+    <string name="message_here">פה רושמים את ההודעה</string>
+    <string name="send_message">שליחה</string>
+
     <!-- Single Feed Item -->
-    <string name="send_message">שליחת הודעה</string>
     <string-array name="pets">
         <item>כלב</item>
         <item>חתול</item>

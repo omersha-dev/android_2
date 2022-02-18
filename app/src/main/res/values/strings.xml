@@ -45,7 +45,10 @@
     <string name="post_description">Post Description</string>
 
     <!-- Single Feed Item -->
-    <string name="send_message">Send Message</string>
+    <string name="chat">Chat</string>
+    <string name="message_here">Write your message here</string>
+    <string name="send_message">Send</string>
+
     <string-array name="pets">
         <item>Dog</item>
         <item>Cat</item>

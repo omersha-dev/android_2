@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -20,10 +23,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterHol
 
     LayoutInflater inflater;
     ArrayList<Map<String, Object>> posts;
+    FirebaseDb firebaseDb = FirebaseDb.getInstance();
 
     public FeedAdapter(Context context, ArrayList<Map<String, Object>> postData) {
         this.inflater = LayoutInflater.from(context);
         this.posts = postData;
+    }
+
+    public void insert(ArrayList<Map<String, Object>> newPosts) {
+        this.posts = newPosts;
     }
 
     @NonNull
@@ -39,16 +47,41 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterHol
         char petGender = posts.get(position).get("pet_gender").toString().charAt(0);
         char petSize = posts.get(position).get("pet_size").toString().charAt(0);
 
+        String userEmail = "";
+
+        if (posts.get(position).get("email") != null) {
+            userEmail = posts.get(position).get("email").toString();
+        }
+
         holder.petName.setText(posts.get(position).get("pet_name").toString());
         holder.postDesc.setText(posts.get(position).get("post_description").toString() + "\n\nClick for details.");
         holder.feedPetAgeView.setText(posts.get(position).get("pet_age").toString());
         holder.feedPetGenderView.setText(String.valueOf(petGender));
         holder.feedPetSizeView.setText(String.valueOf(petSize));
-        
+
+        if (firebaseDb.isSignedIn() && firebaseDb.getCurrentUser().get("email").toString().equals(userEmail)) {
+             holder.makeContact.setVisibility(View.GONE);
+        }
+
         holder.makeContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), posts.get(position).get("email").toString(), Toast.LENGTH_SHORT).show();
+                String otherUserEmail = posts.get(position).get("email").toString();
+                FirebaseDb firebaseDb = FirebaseDb.getInstance();
+                firebaseDb.checkChatBetweenUsers(otherUserEmail, new FirebaseCallbacks() {
+                    @Override
+                    public void startChat() {
+                        FragmentManager fragmentManager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
+                        Bundle args = new Bundle();
+                        args.putString("otherUserEmail", otherUserEmail);
+                        ChatFragment chatFragment = new ChatFragment();
+                        chatFragment.setArguments(args);
+                        fragmentManager
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, chatFragment)
+                                .commit();
+                    }
+                });
             }
         });
     }
@@ -95,35 +128,3 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterHol
     }
 
 }
-
-//public class FeedAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
-//
-//    private Random random;
-//
-//    public FeedAdapter(int seed) {
-//        this.random = new Random(seed);
-//    }
-//
-//    @Override
-//    public int getItemViewType(int position) {
-//        return R.layout.single_feed_item;
-////        return super.getItemViewType(position);
-//    }
-//
-//    @NonNull
-//    @Override
-//    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-//        return new RecyclerViewHolder(view);
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-//        holder.getView().setText(String.valueOf(random.nextInt()));
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return 100;
-//    }
-//}

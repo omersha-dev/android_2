@@ -158,11 +158,8 @@ public class NewPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent galleryIntent = new Intent();
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, 2);
-//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(intent, CAMERA_REQUEST);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, CAMERA_REQUEST);
             }
         });
 
@@ -172,7 +169,7 @@ public class NewPostFragment extends Fragment {
                 loader.setVisibility(View.VISIBLE);
                 boolean hasErrors = false;
                 Map<String, Object> postData = new HashMap<>();
-                postData.put("email", FirebaseDb.getCurrentUser().get("email"));
+                postData.put("email", FirebaseDb.getCurrentUser().get("email").toString());
                 postData.put("timestamp", new Timestamp(System.currentTimeMillis()));
                 if (petNameField.getEditableText().toString().isEmpty()) {
                     postDescriptionLayout.setError("Required");
@@ -232,10 +229,10 @@ public class NewPostFragment extends Fragment {
                 } else {
                     postData.put("post_description", postDescriptionField.getEditableText().toString());
                 }
-                if (bitmap == null) {
-                    Toast.makeText(getActivity(), "Please add an image", Toast.LENGTH_SHORT).show();
-                    hasErrors = true;
-                }
+//                if (bitmap == null) {
+//                    Toast.makeText(getActivity(), "Please add an image", Toast.LENGTH_SHORT).show();
+//                    hasErrors = true;
+//                }
                 if (!hasErrors) {
                     FirebaseDb firebaseDb = FirebaseDb.getInstance();
                     firebaseDb.addPost(postData, new FirebaseCallbacks() {

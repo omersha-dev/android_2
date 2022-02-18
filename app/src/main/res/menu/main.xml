@@ -15,31 +15,51 @@
             android:id="@+id/articles"
             android:icon="@drawable/ic_launcher_background"
             android:title="@string/articles" />
-    </group>
-
-    <group
-        android:checkableBehavior="single" >
         <item
-            android:title="@string/user_interface" >
-            <menu>
-                <item
-                    android:id="@+id/my_account_nav"
-                    android:title="@string/my_account"
-                    android:icon="@drawable/ic_launcher_background" />
-                <item
-                    android:id="@+id/signup_nav"
-                    android:title="@string/signup"
-                    android:icon="@drawable/ic_launcher_background" />
-                <item
-                    android:id="@+id/signin_nav"
-                    android:title="@string/signin"
-                    android:icon="@drawable/ic_launcher_background" />
-                <item
-                    android:id="@+id/signout"
-                    android:title="@string/signout"
-                    android:icon="@drawable/ic_launcher_background" />
-            </menu>
-        </item>
-
+            android:id="@+id/chat_nav"
+            android:title="@string/chat"
+            android:icon="@drawable/ic_launcher_background" />
+        <item
+            android:id="@+id/my_account_nav"
+            android:title="@string/my_account"
+            android:icon="@drawable/ic_launcher_background" />
+        <item
+            android:id="@+id/signup_nav"
+            android:title="@string/signup"
+            android:icon="@drawable/ic_launcher_background" />
+        <item
+            android:id="@+id/signin_nav"
+            android:title="@string/signin"
+            android:icon="@drawable/ic_launcher_background" />
+        <item
+            android:id="@+id/signout"
+            android:title="@string/signout"
+            android:icon="@drawable/ic_launcher_background" />
     </group>
+
+<!--    <group-->
+<!--        android:checkableBehavior="single" >-->
+<!--        <item-->
+<!--            android:title="@string/user_interface" >-->
+<!--            <menu>-->
+<!--                <item-->
+<!--                    android:id="@+id/my_account_nav"-->
+<!--                    android:title="@string/my_account"-->
+<!--                    android:icon="@drawable/ic_launcher_background" />-->
+<!--                <item-->
+<!--                    android:id="@+id/signup_nav"-->
+<!--                    android:title="@string/signup"-->
+<!--                    android:icon="@drawable/ic_launcher_background" />-->
+<!--                <item-->
+<!--                    android:id="@+id/signin_nav"-->
+<!--                    android:title="@string/signin"-->
+<!--                    android:icon="@drawable/ic_launcher_background" />-->
+<!--                <item-->
+<!--                    android:id="@+id/signout"-->
+<!--                    android:title="@string/signout"-->
+<!--                    android:icon="@drawable/ic_launcher_background" />-->
+<!--            </menu>-->
+<!--        </item>-->
+
+<!--    </group>-->
 </menu>
