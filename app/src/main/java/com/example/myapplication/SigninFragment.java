@@ -1,18 +1,32 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,7 +89,7 @@ public class SigninFragment extends Fragment {
 
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view2) {
                 loader.setVisibility(View.VISIBLE);
                 FirebaseDb firebaseDb = FirebaseDb.getInstance();
                 firebaseDb.signIn(
@@ -85,6 +99,13 @@ public class SigninFragment extends Fragment {
                             @Override
                             public void onSignIn() {
                                 System.out.println("Signed In");
+
+                                Map<String, String> creds = new HashMap<>();
+                                creds.put("email", emailField.getEditableText().toString());
+                                creds.put("password", passwordField.getEditableText().toString());
+
+                                ((MainActivity)getActivity()).updateMenuOnSignIn();
+
                                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                                 fragmentManager
                                         .beginTransaction()
@@ -105,4 +126,5 @@ public class SigninFragment extends Fragment {
 
         return view;
     }
+
 }

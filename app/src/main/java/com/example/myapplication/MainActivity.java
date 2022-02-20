@@ -10,12 +10,18 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -26,15 +32,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FrameLayout frameLayout;
     MenuItem currentMenuItem;
 
+    FirebaseDb firebaseDb = FirebaseDb.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         materialToolbar = findViewById(R.id.toolbar);
         frameLayout = findViewById(R.id.main_frame_layout);
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigation);
+
+        hideSignedInMenuItems();
 
         boolean isRightToLeft = getResources().getBoolean(R.bool.is_right_to_left);
 
@@ -82,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         item.setChecked(true);
 
 //        FeedFragment feedFragment = (FeedFragment) fragmentManager.findFragmentByTag("feed");
-//        ArticlesFragment articlesFragment = (ArticlesFragment) fragmentManager.findFragmentByTag("articles");
 //        NewPostFragment newPostFragment = (NewPostFragment) fragmentManager.findFragmentByTag("new_post");
 //        ContactsFragment contactsFragment = (ContactsFragment) fragmentManager.findFragmentByTag("chat");
 //        SignupFragment signupFragment = (SignupFragment) fragmentManager.findFragmentByTag("signup");
@@ -90,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        MyAccountFragment myAccountFragment = (MyAccountFragment) fragmentManager.findFragmentByTag("signup");
 
         FeedFragment feedFragment = new FeedFragment();
-        ArticlesFragment articlesFragment = new ArticlesFragment();
         NewPostFragment newPostFragment = new NewPostFragment();
         ContactsFragment contactsFragment = new ContactsFragment();
         SignupFragment signupFragment = new SignupFragment();
@@ -107,15 +116,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .addToBackStack("feed")
                         .commit();
                 break;
-            case (R.id.articles):
-                if (articlesFragment == null) {
-                    fragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, articlesFragment)
-                            .addToBackStack("articles")
-                            .commit();
-                }
-                break;
+//            case (R.id.articles):
+//                if (articlesFragment == null) {
+//                    fragmentManager
+//                            .beginTransaction()
+//                            .replace(R.id.fragment_container, articlesFragment)
+//                            .addToBackStack("articles")
+//                            .commit();
+//                }
+//                break;
             case (R.id.new_post):
                 if (firebaseDb.isSignedIn()) {
                     fragmentManager
@@ -173,6 +182,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;
+    }
+
+    private void hideSignedInMenuItems() {
+        MenuItem newPostItem = navigationView.getMenu().findItem(R.id.new_post);
+        MenuItem chatItem = navigationView.getMenu().findItem(R.id.chat_nav);
+        MenuItem myAccountItem = navigationView.getMenu().findItem(R.id.my_account_nav);
+        MenuItem signInItem = navigationView.getMenu().findItem(R.id.signin_nav);
+        MenuItem signUpItem = navigationView.getMenu().findItem(R.id.signup_nav);
+        MenuItem signOutItem = navigationView.getMenu().findItem(R.id.signout);
+
+        newPostItem.setVisible(false);
+        chatItem.setVisible(false);
+        myAccountItem.setVisible(false);
+        signInItem.setVisible(true);
+        signUpItem.setVisible(true);
+        signOutItem.setVisible(false);
+    }
+
+    public void updateMenuOnSignIn() {
+        MenuItem newPostItem = navigationView.getMenu().findItem(R.id.new_post);
+        MenuItem chatItem = navigationView.getMenu().findItem(R.id.chat_nav);
+        MenuItem myAccountItem = navigationView.getMenu().findItem(R.id.my_account_nav);
+        MenuItem signInItem = navigationView.getMenu().findItem(R.id.signin_nav);
+        MenuItem signUpItem = navigationView.getMenu().findItem(R.id.signup_nav);
+        MenuItem signOutItem = navigationView.getMenu().findItem(R.id.signout);
+
+        newPostItem.setVisible(true);
+        chatItem.setVisible(true);
+        myAccountItem.setVisible(true);
+        signInItem.setVisible(false);
+        signUpItem.setVisible(false);
+        signOutItem.setVisible(true);
     }
 
     private void uncheckMenuItems() {

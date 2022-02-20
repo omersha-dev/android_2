@@ -76,9 +76,9 @@ public class FeedFragment extends Fragment implements FeedAdapter.onItemClick {
         Context context = this.getContext();
 
 //        Add the following lines to create RecyclerView
-        recyclerView = view.findViewById(R.id.feed_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+//        recyclerView = view.findViewById(R.id.feed_view);
+//        recyclerView.setHasFixedSize(true);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 //        recyclerView.setAdapter(new FeedAdapter(context, posts));
 
         FirebaseDb firebaseDb = FirebaseDb.getInstance();
